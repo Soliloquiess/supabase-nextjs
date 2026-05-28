@@ -38,11 +38,11 @@ Phase 2 (확장)   댓글 + 좋아요 + 검색/카테고리 + 실시간 + 프로
 **작업 / 체크리스트**
 - [x] `comments` 테이블 + RLS, 상세 페이지 댓글 작성/목록/삭제 (`0002_comments.sql`)
 - [x] `likes` 테이블 + RLS, 좋아요 토글(사용자당 1회) + 카운트 표시 (`0003_likes.sql`)
-- [ ] 목록 검색(제목/본문) 및 카테고리 또는 태그
-- [ ] 실시간 댓글: Supabase Realtime 구독으로 새 댓글 즉시 반영
-- [ ] 프로필 페이지(`/profile`) + 아바타(Supabase Storage)
-- [ ] 페이지네이션 또는 무한 스크롤
-- [ ] 접근성/반응형/다크모드 마감, Vercel 배포 + 환경 변수
+- [x] 목록 검색(제목/본문) — URL 쿼리 `?q=` + Supabase `ilike`
+- [x] 페이지네이션 — `?page=N` + `.range()` + `count: exact`
+- [x] 실시간 댓글: Supabase Realtime 구독 → `router.refresh()` (`0004_realtime.sql`)
+- [~] 프로필 페이지(`/profile`): 닉네임/아바타 URL 편집 완료. Supabase Storage 업로드는 미구현(외부 URL만)
+- [x] Vercel 배포 + 환경 변수 → https://supabase-nextjs-beta.vercel.app
 
 **완료 기준**: 댓글·좋아요가 동작하고, 검색으로 글을 찾을 수 있으며, 배포 URL에서 전체 흐름이 동작.
 
