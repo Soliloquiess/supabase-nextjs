@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { updateProfile } from "./actions";
+import { updateProfile, uploadAvatar } from "./actions";
 
 export default function ProfilePage({
   searchParams,
@@ -51,14 +51,34 @@ async function ProfileContent({
         <p className="text-sm text-muted-foreground">{user.email}</p>
       </header>
 
-      {ok && (
+      {ok === "1" && (
         <p className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-400">
           저장되었습니다.
+        </p>
+      )}
+      {ok === "upload" && (
+        <p className="rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-400">
+          아바타가 업로드되었습니다.
         </p>
       )}
       {error === "username" && (
         <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           닉네임은 비울 수 없습니다.
+        </p>
+      )}
+      {error === "file" && (
+        <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          파일을 선택해 주세요.
+        </p>
+      )}
+      {error === "size" && (
+        <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          이미지 크기는 2MB 이하여야 합니다.
+        </p>
+      )}
+      {error === "type" && (
+        <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          이미지 파일만 업로드할 수 있습니다.
         </p>
       )}
 
@@ -88,6 +108,28 @@ async function ProfileContent({
         </div>
         <Button type="submit">저장</Button>
       </form>
+
+      <div className="space-y-2 border-t pt-4">
+        <h2 className="font-medium">아바타 파일 업로드</h2>
+        <p className="text-xs text-muted-foreground">
+          이미지 파일(2MB 이하)을 업로드하면 Supabase Storage에 저장되고
+          아바타 URL이 자동으로 갱신됩니다.
+        </p>
+        <form action={uploadAvatar} className="flex flex-wrap items-center gap-2">
+          <Input
+            id="avatar"
+            name="avatar"
+            type="file"
+            accept="image/*"
+            required
+            aria-label="아바타 이미지"
+            className="max-w-sm"
+          />
+          <Button type="submit" variant="outline">
+            업로드
+          </Button>
+        </form>
+      </div>
 
       {profile?.avatar_url && (
         <div className="space-y-2 border-t pt-4">
