@@ -15,3 +15,13 @@ export function authorName(profiles: PostRow["profiles"]): string {
   const p = Array.isArray(profiles) ? profiles[0] : profiles;
   return p?.username ?? "익명";
 }
+
+/** 댓글 조회 결과 타입. profiles는 작성자 username 조인용. */
+export interface CommentRow {
+  id: string;
+  post_id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  profiles: PostRow["profiles"];
+}

@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { authorName, type PostRow } from "../types";
 import { deletePost } from "../actions";
+import { CommentsSection } from "./comments-section";
 
 export default function PostDetailPage({
   params,
@@ -84,6 +85,8 @@ async function PostDetailContent({
           </form>
         </div>
       )}
+
+      <CommentsSection postId={post.id} currentUserId={user?.id ?? null} />
     </>
   );
 }
