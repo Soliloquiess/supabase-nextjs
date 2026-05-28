@@ -17,15 +17,15 @@ Phase 2 (확장)   댓글 + 좋아요 + 검색/카테고리 + 실시간 + 프로
 선행: 없음 (Supabase 스타터의 인증은 이미 포함)
 
 **작업 / 체크리스트**
-- [ ] Supabase 프로젝트 생성, `.env.local`에 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 설정
-- [ ] DB 스키마 생성: `profiles`, `posts` 테이블 (SQL 또는 마이그레이션)
-- [ ] RLS 활성화 + 정책: posts 읽기 전체 / 작성·수정·삭제는 본인(`auth.uid() = author_id`)
-- [ ] 가입 시 `profiles` 자동 생성 트리거 (`auth.users` → `profiles`)
-- [ ] 게시글 목록 페이지 `/posts` (최신순, 서버 컴포넌트에서 조회)
-- [ ] 게시글 작성 페이지 `/posts/new` (로그인 필요, 미로그인 시 `/auth/login` 유도)
-- [ ] 게시글 상세 `/posts/[id]`
-- [ ] 게시글 수정/삭제 (작성자 본인만 버튼 노출 + RLS로 강제)
-- [ ] 네비게이션에 로그인 상태별 메뉴(글쓰기/로그아웃) 연결
+- [ ] Supabase 프로젝트 생성, `.env.local`에 `NEXT_PUBLIC_SUPABASE_URL`·`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` 설정 (사용자 작업)
+- [~] DB 스키마 생성: `profiles`, `posts` 테이블 → SQL 작성 완료(`supabase/migrations/0001_init_posts.sql`), Supabase에서 실행 필요
+- [~] RLS 활성화 + 정책: 위 SQL에 포함 (Supabase 실행 시 적용됨)
+- [~] 가입 시 `profiles` 자동 생성 트리거: 위 SQL에 포함
+- [x] 게시글 목록 페이지 `/posts` (최신순, 서버 컴포넌트에서 조회)
+- [x] 게시글 작성 페이지 `/posts/new` (로그인 필요, Server Action `createPost`)
+- [x] 게시글 상세 `/posts/[id]` (작성자명·일시·내용)
+- [x] 게시글 수정/삭제 (작성자만 UI 노출 + Server Action + RLS로 강제)
+- [x] 네비게이션에 `게시판` 링크 + 로그인 상태별 글쓰기 버튼
 
 **완료 기준**: 로그인 후 글 작성→목록/상세 확인→본인 글만 수정/삭제 가능. 비로그인은 열람만.
 
