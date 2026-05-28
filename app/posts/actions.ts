@@ -89,6 +89,27 @@ export async function deleteComment(formData: FormData) {
   revalidatePath(`/posts/${postId}`);
 }
 
+/** 게시글 신고: 로그인 사용자, 본인을 reporter로(RLS 강제). */
+export async function createReport(formData: FormData) {
+  const postId = String(formData.get("post_id") ?? "");
+  const reason = String(formData.get("reason") ?? "").trim();
+  if (!postId || !reason) redirect(`/posts/${postId}?error=report`);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { error } = await supabase
+    .from("reports")
+    .insert({ post_id: postId, reporter_id: user.id, reason });
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/posts/${postId}`);
+  redirect(`/posts/${postId}?reported=1`);
+}
+
 /** 좋아요 토글: 이미 눌러뒀으면 해제, 아니면 추가. 사용자당 1회(복합 PK 강제). */
 export async function toggleLike(formData: FormData) {
   const postId = String(formData.get("post_id") ?? "");

@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { authorName, type PostRow } from "../types";
-import { deletePost, toggleLike } from "../actions";
+import { createReport, deletePost, toggleLike } from "../actions";
 import { CommentsSection } from "./comments-section";
 
 export default function PostDetailPage({
@@ -90,21 +90,48 @@ async function PostDetailContent({
         {post.content || "(내용 없음)"}
       </div>
 
-      <form action={toggleLike} className="flex">
-        <input type="hidden" name="post_id" value={post.id} />
-        <Button
-          type="submit"
-          variant={isLiked ? "default" : "outline"}
-          size="sm"
-          aria-pressed={isLiked}
-        >
-          <Heart
-            className={cn("size-4", isLiked && "fill-red-500 text-red-500")}
-            aria-hidden
-          />
-          좋아요 {likeCount ?? 0}
-        </Button>
-      </form>
+      <div className="flex flex-wrap items-center gap-2">
+        <form action={toggleLike} className="flex">
+          <input type="hidden" name="post_id" value={post.id} />
+          <Button
+            type="submit"
+            variant={isLiked ? "default" : "outline"}
+            size="sm"
+            aria-pressed={isLiked}
+          >
+            <Heart
+              className={cn("size-4", isLiked && "fill-red-500 text-red-500")}
+              aria-hidden
+            />
+            좋아요 {likeCount ?? 0}
+          </Button>
+        </form>
+
+        {/* 신고: 로그인 사용자 & 본인 글 아닐 때만 노출 */}
+        {user && !isAuthor && (
+          <details className="rounded-md">
+            <summary className="cursor-pointer rounded-md border px-3 py-1.5 text-sm hover:bg-accent">
+              🚩 신고
+            </summary>
+            <form
+              action={createReport}
+              className="mt-2 flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-center"
+            >
+              <input type="hidden" name="post_id" value={post.id} />
+              <input
+                type="text"
+                name="reason"
+                required
+                placeholder="신고 사유 (예: 스팸, 욕설)"
+                className="flex-1 rounded-md border bg-transparent px-2 py-1 text-sm"
+              />
+              <Button type="submit" variant="destructive" size="sm">
+                제출
+              </Button>
+            </form>
+          </details>
+        )}
+      </div>
 
       {isAuthor && (
         <div className="flex gap-2 border-t pt-4">
