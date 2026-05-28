@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { authorName, type CommentRow } from "../types";
 import { createComment, deleteComment } from "../actions";
+import { CommentsRealtime } from "./comments-realtime";
 
 /** 상세 페이지의 댓글 섹션. 목록 조회 + 작성 폼(로그인 시) + 삭제(본인). */
 export async function CommentsSection({
@@ -24,6 +25,7 @@ export async function CommentsSection({
 
   return (
     <section className="space-y-4 border-t pt-6">
+      <CommentsRealtime postId={postId} />
       <h2 className="text-lg font-semibold">댓글 ({comments.length})</h2>
 
       {comments.length === 0 ? (
