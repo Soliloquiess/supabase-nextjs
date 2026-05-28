@@ -88,3 +88,38 @@ export async function deleteComment(formData: FormData) {
 
   revalidatePath(`/posts/${postId}`);
 }
+
+/** 좋아요 토글: 이미 눌러뒀으면 해제, 아니면 추가. 사용자당 1회(복합 PK 강제). */
+export async function toggleLike(formData: FormData) {
+  const postId = String(formData.get("post_id") ?? "");
+  if (!postId) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: existing } = await supabase
+    .from("likes")
+    .select("post_id")
+    .eq("post_id", postId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (existing) {
+    const { error } = await supabase
+      .from("likes")
+      .delete()
+      .eq("post_id", postId)
+      .eq("user_id", user.id);
+    if (error) throw new Error(error.message);
+  } else {
+    const { error } = await supabase
+      .from("likes")
+      .insert({ post_id: postId, user_id: user.id });
+    if (error) throw new Error(error.message);
+  }
+
+  revalidatePath(`/posts/${postId}`);
+}

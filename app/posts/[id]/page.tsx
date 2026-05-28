@@ -1,12 +1,13 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Heart } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { authorName, type PostRow } from "../types";
-import { deletePost } from "../actions";
+import { deletePost, toggleLike } from "../actions";
 import { CommentsSection } from "./comments-section";
 
 export default function PostDetailPage({
@@ -58,6 +59,23 @@ async function PostDetailContent({
   const post = data as unknown as PostRow;
   const isAuthor = user?.id === post.author_id;
 
+  // 좋아요 카운트 + 현재 사용자의 좋아요 여부
+  const { count: likeCount } = await supabase
+    .from("likes")
+    .select("*", { count: "exact", head: true })
+    .eq("post_id", post.id);
+
+  let isLiked = false;
+  if (user) {
+    const { data: likedRow } = await supabase
+      .from("likes")
+      .select("post_id")
+      .eq("post_id", post.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    isLiked = !!likedRow;
+  }
+
   return (
     <>
       <header className="space-y-2">
@@ -71,6 +89,22 @@ async function PostDetailContent({
       <div className="text-[0.95rem] whitespace-pre-wrap leading-7">
         {post.content || "(내용 없음)"}
       </div>
+
+      <form action={toggleLike} className="flex">
+        <input type="hidden" name="post_id" value={post.id} />
+        <Button
+          type="submit"
+          variant={isLiked ? "default" : "outline"}
+          size="sm"
+          aria-pressed={isLiked}
+        >
+          <Heart
+            className={cn("size-4", isLiked && "fill-red-500 text-red-500")}
+            aria-hidden
+          />
+          좋아요 {likeCount ?? 0}
+        </Button>
+      </form>
 
       {isAuthor && (
         <div className="flex gap-2 border-t pt-4">
