@@ -23,6 +23,12 @@ export default function Home() {
               >
                 게시판
               </Link>
+              <Link
+                href={"/profile"}
+                className="font-normal text-foreground/70 hover:text-foreground"
+              >
+                프로필
+              </Link>
               <div className="flex items-center gap-2">
                 <DeployButton />
               </div>
